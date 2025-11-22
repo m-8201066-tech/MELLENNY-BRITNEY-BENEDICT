@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Masuk|Sains Svm 1</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background-color: white;
+      width: 90%;
+      max-width: 400px;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .login-container img {
+      width: 160px;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 25px;
+      font-size: 1.8em;
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      color: #555;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: 0.3s;
+    }
+
+    .input-group input:focus {
+      border-color: #33aaff;
+      outline: none;
+      box-shadow: 0 0 4px #33aaff;
+    }
+
+    .btn-login {
+      width: 100%;
+      background-color: #33aaff;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 25px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 25px;
+      transition: 0.3s;
+    }
+
+    .btn-login:hover {
+      background-color: #0d8af0;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      color: #33aaff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+
+    footer {
+      position: fixed;
+      bottom: 10px;
+      text-align: center;
+      width: 100%;
+      color: #666;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <img src="Logo.jpg" alt="Logo Kolej Vokasional Kudat">
+    <h2>Log Masuk Akaun</h2>
+
+    <form onsubmit="return validateLogin(event)">
+      <div class="input-group">
+        <label for="username">Nama Pengguna</label>
+        <input type="text" id="username" placeholder="Masukkan nama pengguna" required>
+      </div>
+
+      <div class="input-group">
+        <label for="password">Kata Laluan</label>
+        <input type="password" id="password" placeholder="Masukkan kata laluan" required>
+      </div>
+
+      <button type="submit" class="btn-login">Log Masuk</button>
+
+      <a href="daftar.html">Tidak mempunyai akaun? Daftar sekarang</a>
+      
+    </form>
+
+    <a href="index1.html" class="back-link">← Kembali ke Halaman Utama</a>
+  </div>
+
+  <footer style="text-align: center; padding: 20px; background-color: #f1f1f1;">
+    &copy; 2025 Sains SVM 1 KVK| Hak Cipta Mellenny Britney
+  </footer>
+
+  <script>
+    function validateLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (username === "Mellenny" && password === "12345678") {
+        alert("Log masuk berjaya!");
+        window.location.href = "index1.html"; // kembali ke halaman utama
+      } else {
+        alert("Nama pengguna atau kata laluan salah!");
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE Halaman Utama>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halaman Utama|Sains Svm 1</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #333;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: white;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header img {
+      height: 60px;
+    }
+
+    .btn-login {
+      background-color: #33aaff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .btn-login:hover {
+      background-color: #0d8af0;
+    }
+
+    /* Hero section */
+    .hero {
+      position: relative;
+      text-align: center;
+      color: white;
+    }
+
+    .hero img {
+      width: 100%;
+      height: 50vh;
+      object-fit: cover;
+      filter: brightness(60%);
+    }
+
+    .hero-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .hero-text h1 {
+      font-size: 3em;
+      font-weight: 800;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
+
+    .hero-text h3 {
+      font-size: 1.5em;
+      font-weight: 600;
+      margin-top: 10px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
+
+    /* Tentang kami */
+    .about {
+      padding: 40px 20px;
+      text-align: center;
+      font-size: 1.2em;
+      color: #333;
+    }
+
+    /* Nota button */
+    .nota-btn {
+      display: block;
+      width: 80%;
+      max-width: 400px;
+      margin: 30px auto;
+      background-color: #33aaff;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 20px;
+      font-size: 1.5em;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+     .nota-btn:hover {
+      background-color: #0d8af0;
+    }
+       /* Kuiz button */
+    .kuiz-btn {
+      display: block;
+      width: 80%;
+      max-width: 400px;
+      margin: 30px auto;
+      background-color: #33aaff;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 20px;
+      font-size: 1.5em;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .kuiz-btn:hover {
+      background-color: #0d8af0;
+    }
+
+    @media (max-width: 600px) {
+      .hero-text h1 {
+        font-size: 2em;
+      }
+      .hero-text h3 {
+        font-size: 1.2em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <img src="Logo.jpg" alt="Kolej Vokasional Logo">
+    <a href="log masuk.html"class=btn-login>Log Masuk</a>
+  </header>
+
+  <!-- Hero section -->
+  <section class="hero">
+    <img src="kv.jpg" alt="Kolej Vokasional Kudat">
+    <div class="hero-text">
+      <h1>E-PEMBELAJARAN SAINS</h1>
+      <h3>Kolej Vokasional Kudat</h3>
+    </div>
+  </section>
+
+  <!-- Tentang Kami -->
+  <section class="about">
+    <align="center"><b>Tentang Kami</b>
+
+      <br></br>
+      <p>E-pembelajaran Sains Svm 1 merupakan satu platform yang di buat untuk memudahkan</p>
+      <p> pembelajaran secara atas talian bagi pensyarah dan pelajar di Kolej Vokasional Kudat</p>
+
+  </section>
+
+  <!-- Nota Button -->
+  <a href="nota.html" class="nota-btn">Nota</a>
+  <a href="log masuk.html" class="kuiz-btn">Kuiz<a>
+
+  <script>
+    
+      <!-- kuiz Button -->
+
+    document.querySelector('.kuiz-btn').addEventListener('click', () => {
+      alert('Pastikan .');
+    });
+
+  </script>
+  
+<footer style="text-align: center; padding: 20px; background-color: #f1f1f1;">
+    &copy; 2025 Sains Svm 1 Kvk| Hak Cipta Mellenny Britney
+</footer>
+</body>
+</html>
