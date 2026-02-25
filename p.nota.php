@@ -52,7 +52,35 @@ if (isset($_SESSION['id'])) {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: filter 0.3s ease; /* Transisi untuk kesan aksesibiliti */
         }
+
+        /* --- STYLES AKSESIBILITI (SAMA SEPERTI KUIZ1.PHP) --- */
+        .acc-wrapper { position: fixed; right: 25px; top: 120px; z-index: 2000; }
+        .acc-button {
+            background: var(--primary-soft); width: 55px; height: 55px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4); transition: 0.3s;
+        }
+        .acc-button img { width: 30px; filter: invert(1); }
+        .acc-menu {
+            display: none; position: absolute; right: 0; top: 65px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            width: 250px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.5); overflow: hidden; animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .acc-menu.active { display: block; }
+        .acc-menu-header { padding: 15px 20px; font-weight: 800; background: var(--primary-soft); color: white; font-size: 14px; text-transform: uppercase; text-align: center; }
+        .acc-item { padding: 14px 20px; display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 14px; font-weight: 600; color: #444; border-bottom: 1px solid rgba(0,0,0,0.05); text-align: left; }
+        .acc-item:hover { background: rgba(108, 92, 231, 0.1); color: var(--primary-soft); }
+        .acc-item img { width: 20px; height: 20px; object-fit: contain; }
+
+        html.grayscale { filter: grayscale(100%) !important; }
+        html.negative-contrast { filter: invert(100%) hue-rotate(180deg) !important; }
+        .high-contrast { background: #000 !important; color: #ffff00 !important; }
+        .high-contrast * { color: #ffff00 !important; border-color: #ffff00 !important; background-image: none !important; }
+        /* -------------------------------------------------- */
 
         /* HEADER */
         header {
@@ -239,6 +267,33 @@ if (isset($_SESSION['id'])) {
 </head>
 <body>
 
+<div class="acc-wrapper">
+    <div class="acc-button" onclick="toggleAccMenu()" title="Pilihan Aksesibilitas">
+        <img src="tools.png" alt="Aksesibilitas">
+    </div>
+    <div class="acc-menu" id="accMenu">
+        <div class="acc-menu-header">Alat Aksesibilitas</div>
+        <div class="acc-item" onclick="adjustFont(10)">
+            <img src="besar.png" alt="Zoom In"> Besarkan teks
+        </div>
+        <div class="acc-item" onclick="adjustFont(-10)">
+            <img src="kecil.png" alt="Zoom Out"> Kecilkan teks
+        </div>
+        <div class="acc-item" onclick="setEffect('grayscale')">
+            <img src="gray.png" alt="Grayscale"> Mod Kelabu
+        </div>
+        <div class="acc-item" onclick="setEffect('high-contrast')">
+            <img src="high.png" alt="Contrast"> Kontras Tinggi
+        </div>
+        <div class="acc-item" onclick="setEffect('negative-contrast')">
+            <img src="negatif.png" alt="Negative"> Kontras Negatif
+        </div>
+        <div class="acc-item" onclick="resetAcc()" style="color: #e74c3c; border-bottom: none; justify-content: center; font-weight: 800;">
+            <img src="reset.png" alt="Reset"> Reset
+        </div>
+    </div>
+</div>
+
 <header>
     <a href="pensyarah.php">
         <img src="Logo.png" alt="Logo" class="logo-img">
@@ -308,8 +363,48 @@ if (isset($_SESSION['id'])) {
     duration: 1000,
     once: true,
   });
+
+  // --- JAVASCRIPT AKSESIBILITI (SAMA SEPERTI KUIZ1.PHP) ---
+  function toggleAccMenu() {
+      document.getElementById('accMenu').classList.toggle('active');
+  }
+
+  let zoom = 100;
+  function adjustFont(amount) {
+      zoom += amount;
+      if(zoom < 70) zoom = 70;
+      if(zoom > 150) zoom = 150;
+      document.documentElement.style.fontSize = zoom + "%";
+  }
+
+  function setEffect(effectClass) {
+      document.documentElement.classList.remove('grayscale', 'negative-contrast');
+      document.body.classList.remove('high-contrast');
+
+      if (effectClass === 'grayscale' || effectClass === 'negative-contrast') {
+          document.documentElement.classList.add(effectClass);
+      } else if (effectClass === 'high-contrast') {
+          document.body.classList.add(effectClass);
+      }
+  }
+
+  function resetAcc() {
+      zoom = 100;
+      document.documentElement.style.fontSize = "100%";
+      document.documentElement.className = "";
+      document.body.className = "";
+  }
+
+  // Menutup menu jika klik di luar
+  window.onclick = function(event) {
+      if (!event.target.closest('.acc-wrapper')) {
+          let menu = document.getElementById('accMenu');
+          if(menu && menu.classList.contains('active')) {
+              menu.classList.remove('active');
+          }
+      }
+  }
 </script>
 
 </body>
 </html>
-
