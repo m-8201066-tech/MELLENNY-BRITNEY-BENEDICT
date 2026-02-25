@@ -97,8 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     .toggle-password { position: absolute; right: 18px; top: 45px; cursor: pointer; color: var(--primary-soft); font-weight: 800; font-size: 0.8rem; text-transform: uppercase; }
     .btn-login { width: 100%; background: var(--primary-soft); color: white; border: none; padding: 16px; border-radius: 18px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.4s; box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3); margin-top: 10px; }
     .btn-login:hover { background: #5b4bc4; transform: translateY(-3px); }
-    .links-container { display: flex; justify-content: space-between; margin-top: 25px; font-size: 0.85rem; }
+    
+    /* Perubahan di sini: justify-content diketengah */
+    .links-container { display: flex; justify-content: center; margin-top: 25px; font-size: 0.85rem; }
     .links-container a { color: var(--primary-soft); text-decoration: none; font-weight: 700; }
+    
     .back-link { display: inline-block; margin-top: 30px; color: #636e72; text-decoration: none; font-weight: 700; font-size: 0.9rem; }
     footer { position: fixed; bottom: 0; text-align: center; width: 100%; color: var(--text-dark); font-size: 0.85rem; padding: 20px; font-weight: 600; }
   </style>
@@ -121,7 +124,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <button type="submit" class="btn-login">Log Masuk Sekarang</button>
             <div class="links-container">
                 <a href="daftar.php">Daftar Akaun Baru</a>
-                <a href="lupa.php">Lupa Kata Laluan?</a>
             </div>
         </form>
         <a href="index.php" class="back-link">← Kembali ke Utama</a>
