@@ -1,0 +1,438 @@
+<?php
+session_start();
+include 'config.php';
+
+// Jika belum login, tendang ke logmasuk.php
+if (!isset($_SESSION['id'])) {
+    header("Location: logmasuk.php");
+    exit();
+}
+
+$pelajar_id = $_SESSION['id'];
+
+// --- LOGIK HEADER ---
+$gambar_default = "profile.jpg"; 
+
+$sql_user = $conn->prepare("SELECT gambar FROM pengguna WHERE id = ?");
+$sql_user->bind_param("i", $pelajar_id);
+$sql_user->execute();
+$data_user = $sql_user->get_result()->fetch_assoc();
+
+// Semak jika data gambar wujud
+if (!empty($data_user['gambar']) && file_exists("uploads/" . $data_user['gambar'])) {
+    $gambar_path = "uploads/" . $data_user['gambar']; 
+} else {
+    $gambar_path = $gambar_default; 
+}
+
+// --- SQL: AMBIL SEMUA REKOD ---
+$sql = $conn->prepare("
+    SELECT bab, markah, percubaan, tarikh_jawab
+    FROM rekod_kuiz
+    WHERE pelajar_id = ? 
+    ORDER BY tarikh_jawab DESC, percubaan DESC
+");
+$sql->bind_param("i", $pelajar_id);
+$sql->execute();
+$result = $sql->get_result();
+?>
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekod Kuiz | Sains KuVocC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-soft: #6c5ce7;
+            --secondary-soft: #a29bfe;
+            --text-dark: #2d3436;
+            --glass-white: rgba(255, 255, 255, 0.9);
+            --gov-blue: #1a1a7c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Plus Jakarta Sans", sans-serif; }
+
+        body {
+            background: url('bg.png') no-repeat center center fixed; 
+            background-size: cover;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: filter 0.3s ease;
+        }
+
+        /* --- CSS AKSESIBILITI (DARI nota.php) --- */
+        .acc-wrapper {
+            position: fixed;
+            right: 25px;
+            top: 120px;
+            z-index: 2000;
+        }
+
+        .acc-button {
+            background: var(--primary-soft);
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+            transition: 0.3s;
+        }
+
+        .acc-button:hover { transform: scale(1.1); background: var(--gov-blue); }
+        .acc-button img { width: 30px; filter: invert(1); }
+
+        .acc-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 65px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            width: 250px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.5);
+            overflow: hidden;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .acc-menu.active { display: block; }
+
+        .acc-menu-header {
+            padding: 15px 20px;
+            font-weight: 800;
+            background: var(--primary-soft);
+            color: white;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .acc-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #444;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+
+        .acc-item:hover { background: rgba(108, 92, 231, 0.1); color: var(--primary-soft); padding-left: 25px; }
+        .acc-item img { width: 20px; height: 20px; object-fit: contain; }
+
+        html.grayscale { filter: grayscale(100%) !important; }
+        html.negative-contrast { filter: invert(100%) hue-rotate(180deg) !important; }
+        
+        .high-contrast { background: #000 !important; color: #ffff00 !important; }
+        .high-contrast * { color: #ffff00 !important; border-color: #ffff00 !important; }
+        
+        .high-contrast .back-link img { 
+            filter: brightness(0) saturate(100%) invert(91%) sepia(94%) saturate(7483%) hue-rotate(359deg) brightness(106%) contrast(106%) !important;
+            background: #000 !important;
+            border: 2px solid #ffff00 !important;
+            border-radius: 12px;
+            padding: 5px;
+        }
+        /* --- TAMAT CSS AKSESIBILITI --- */
+
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 8%;
+            background: rgb(255, 255, 255);
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        header img.logo-img { height: 50px; border-radius: 8px; }
+        .header-right { display: flex; align-items: center; gap: 30px; }
+        nav { display: flex; gap: 25px; }
+        nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 800;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+        nav a:hover { color: var(--primary-soft); }
+
+        .profile-btn img {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* MAIN CONTENT */
+        main { flex: 1; padding: 50px 8%; position: relative; }
+        .back-link { display: inline-block; margin-bottom: 20px; transition: 0.3s; }
+        .back-link img { width: 50px; transition: 0.3s; }
+        .back-link:hover { transform: translateX(-8px); }
+
+        .page-header { text-align: center; margin-bottom: 40px; }
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #000000, #434343);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { font-size: 1.1rem; color: #636e72; font-weight: 500; }
+
+        /* SEARCH BOX */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 2px solid #f0edff;
+            border-radius: 15px;
+            padding: 5px 20px;
+            width: 100%;
+            max-width: 450px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 10px 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .search-box img { width: 25px; height: 25px; margin-left: 10px; opacity: 0.7; }
+
+        /* TABLE CONTAINER */
+        .table-container {
+            background: var(--glass-white);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left;
+            padding: 20px;
+            color: var(--primary-soft);
+            font-weight: 800;
+            font-size: 1rem;
+            border-bottom: 2px solid #f0edff;
+        }
+        td {
+            padding: 20px;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            font-weight: 600;
+            border-bottom: 1px solid #f9f9f9;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(108, 92, 231, 0.03); }
+
+        .badge-bab {
+            background: #f0edff;
+            color: var(--primary-soft);
+            padding: 6px 15px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+        .markah-box { font-weight: 800; color: #2d3436; }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #636e72;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 5%; }
+            nav { display: none; }
+            h1 { font-size: 2.2rem; }
+            .table-container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="acc-wrapper">
+    <div class="acc-button" onclick="toggleAccMenu()">
+        <img src="tools.png" alt="Aksesibilitas">
+    </div>
+    <div class="acc-menu" id="accMenu">
+        <div class="acc-menu-header">Alat Aksesibilitas</div>
+        <div class="acc-item" onclick="adjustFont(10)"><img src="besar.png"> Besarkan teks</div>
+        <div class="acc-item" onclick="adjustFont(-10)"><img src="kecil.png"> Kecilkan teks</div>
+        <div class="acc-item" onclick="setEffect('grayscale')"><img src="gray.png"> Mod Kelabu</div>
+        <div class="acc-item" onclick="setEffect('high-contrast')"><img src="high.png"> Kontras Tinggi</div>
+        <div class="acc-item" onclick="setEffect('negative-contrast')"><img src="negatif.png"> Kontras Negatif</div>
+        <div class="acc-item" onclick="resetAcc()" style="color: #e74c3c; border:none; justify-content:center;">
+            <img src="reset.png"> Reset
+        </div>
+    </div>
+</div>
+
+<header>
+    <a href="index.php"><img src="Logo.png" alt="Logo" class="logo-img"></a>
+    <div class="header-right">
+        <nav>
+            <a href="index.php">Utama</a>
+            <a href="nota.php">Nota</a>
+            <a href="kuiz.php">Kuiz</a>
+            <a href="rekod.php">Rekod</a>
+        </nav>
+        <div class="user-area">
+            <?php if(isset($_SESSION['id'])) { ?>
+                <a href="Profail.php" class="profile-btn">
+                    <img src="<?php echo $gambar_path; ?>" alt="Profil">
+                </a>
+            <?php } ?>
+        </div>
+    </div>
+</header>
+
+<main>
+    <a href="index.php" class="back-link" data-aos="fade-right">
+        <img src="back.png" alt="Back">
+    </a>
+
+    <div class="page-header" data-aos="fade-up">
+        <h1>Rekod Pencapaian</h1>
+        <p class="subtitle">Prestasi kuiz SVM Semester 1 anda</p>
+    </div>
+
+    <div class="search-container" data-aos="fade-up" data-aos-delay="100">
+        <div class="search-box">
+            <input id="searchInput" type="text" placeholder="Carian...">
+            <img src="search.png" alt="Search">
+        </div>
+    </div>
+
+    <div class="table-container" data-aos="zoom-in" data-aos-delay="200">
+        <table id="rekodTable">
+            <thead>
+                <tr>
+                    <th>Bab</th>
+                    <th>Markah</th>
+                    <th>Percubaan</th>
+                    <th>Tarikh Jawab</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $tarikh = date("d M Y", strtotime($row['tarikh_jawab']));
+                        echo "<tr>
+                            <td><span class='badge-bab'>{$row['bab']}</span></td>
+                            <td><span class='markah-box'>{$row['markah']} / 100</span></td>
+                            <td>Percubaan ke-{$row['percubaan']}</td>
+                            <td style='color: #000000;'>{$tarikh}</td>
+                        </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='4' style='text-align:center; padding: 40px;'>Belum ada rekod kuiz ditemui.</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer data-aos="fade-up">
+    &copy; 2026 Sains SVM 1 KuVocC | <span style="color: var(--primary-soft);">Hak Cipta Mellenny Britney</span>
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 1000, once: true });
+
+    // --- JS AKSESIBILITI (DARI nota.php) ---
+    function toggleAccMenu() { document.getElementById('accMenu').classList.toggle('active'); }
+
+    let zoom = 100;
+    function adjustFont(amount) {
+        zoom += amount;
+        document.documentElement.style.fontSize = zoom + "%";
+    }
+
+    function setEffect(effectClass) {
+        document.documentElement.classList.remove('grayscale', 'negative-contrast');
+        document.body.classList.remove('high-contrast');
+        if (effectClass === 'grayscale' || effectClass === 'negative-contrast') {
+            document.documentElement.classList.add(effectClass);
+        } else if (effectClass === 'high-contrast') {
+            document.body.classList.add(effectClass);
+        }
+    }
+
+    function resetAcc() {
+        zoom = 100;
+        document.documentElement.style.fontSize = "100%";
+        document.documentElement.className = "";
+        document.body.className = "";
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.acc-wrapper')) {
+            document.getElementById('accMenu').classList.remove('active');
+        }
+    }
+    // --- TAMAT JS AKSESIBILITI ---
+
+    // Skrip Penapisan Dinamik
+    const searchInput = document.getElementById("searchInput");
+    const tableBody = document.querySelector("#rekodTable tbody");
+    const rows = tableBody.querySelectorAll("tr");
+
+    searchInput.addEventListener("keyup", function () {
+        let keyword = this.value.toLowerCase();
+        
+        rows.forEach((row) => {
+            if (row.cells.length > 1) {
+                let text = row.innerText.toLowerCase();
+                row.style.display = text.includes(keyword) ? "" : "none";
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
