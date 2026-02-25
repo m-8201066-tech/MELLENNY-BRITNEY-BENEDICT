@@ -1,0 +1,9 @@
+{
+    "name": "e-pembelajaran/website",
+    "description": "PHP e-learning project with MySQL support",
+    "require": {
+        "php": "^8.2",
+        "ext-mysqli": "*",
+        "ext-pdo_mysql": "*"
+    }
+}
