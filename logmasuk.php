@@ -257,7 +257,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="links-container">
                 <a href="daftar.php">Daftar Akaun Baru</a>
-                <a href="lupa.php">Lupa Kata Laluan?</a>
             </div>
         </form>
 
