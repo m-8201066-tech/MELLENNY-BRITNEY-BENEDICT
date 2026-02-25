@@ -60,7 +60,6 @@ $bahagian_b = [
 $skor_keseluruhan = 0;
 $betul_a = 0;
 $betul_b = 0;
-$jumlah_soalan = count($bahagian_a) + count($bahagian_b); 
 $markah_per_soalan = 4; 
 $sudah_hantar = false;
 
@@ -116,8 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             --primary-soft: #6c5ce7; 
             --secondary-soft: #a29bfe;
             --text-dark: #2d3436; 
-            --soft-blue: #e3f2fd; 
-            --soft-mint: #e8f5e9; 
+            --gov-blue: #1a1a7c;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Plus Jakarta Sans", sans-serif; }
@@ -129,130 +127,122 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             min-height: 100vh; 
             display: flex; 
             flex-direction: column; 
+            transition: filter 0.3s ease;
         }
 
-        /* HEADER (Sama seperti kuiz.php) */
+        /* ACCESSIBILITY TOOLS */
+        .acc-wrapper { position: fixed; right: 25px; top: 120px; z-index: 2000; }
+        .acc-button {
+            background: var(--primary-soft); width: 55px; height: 55px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4); transition: 0.3s;
+        }
+        .acc-button img { width: 30px; filter: invert(1); }
+        .acc-menu {
+            display: none; position: absolute; right: 0; top: 65px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            width: 250px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.5); overflow: hidden; animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .acc-menu.active { display: block; }
+        .acc-menu-header { padding: 15px 20px; font-weight: 800; background: var(--primary-soft); color: white; font-size: 14px; text-transform: uppercase; text-align: center; }
+        .acc-item { padding: 14px 20px; display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 14px; font-weight: 600; color: #444; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .acc-item:hover { background: rgba(108, 92, 231, 0.1); color: var(--primary-soft); }
+        .acc-item img { width: 20px; height: 20px; object-fit: contain; }
+
+        html.grayscale { filter: grayscale(100%) !important; }
+        html.negative-contrast { filter: invert(100%) hue-rotate(180deg) !important; }
+        .high-contrast { background: #000 !important; color: #ffff00 !important; }
+        .high-contrast * { color: #ffff00 !important; border-color: #ffff00 !important; }
+
+        /* HEADER */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 8%;
-            background: rgb(255, 255, 255);
-            backdrop-filter: blur(15px);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 8%; background: rgb(255, 255, 255); backdrop-filter: blur(15px);
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
         }
-
         header img.logo-img { height: 50px; border-radius: 8px; }
-
         .header-right { display: flex; align-items: center; gap: 30px; }
-
         nav { display: flex; gap: 25px; }
-        nav a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 800; 
-            font-size: 0.95rem;
-            transition: 0.3s;
-        }
-
-        nav a:hover { color: var(--primary-soft); }
-
-        .profile-btn img {
-            width: 45px; height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
+        nav a { text-decoration: none; color: var(--text-dark); font-weight: 800; font-size: 0.95rem; }
+        .profile-btn img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
 
         /* MAIN SECTION */
         main { flex: 1; padding: 50px 8%; position: relative; }
-        
-        .container { 
-            max-width: 850px; 
-            margin: auto; 
-            background: rgba(255, 255, 255, 0.95); 
-            padding: 40px; 
-            border-radius: 30px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05); 
-        }
-
-        h1 { text-align: center; font-size: 2.2rem; font-weight: 800; margin-bottom: 5px; color: #4834d4; }
-        h3 { text-align: center; color: #636e72; font-weight: 600; margin-bottom: 30px; }
-        
-        .section-badge { display: inline-block; background: #a29bfe; color: white; padding: 8px 20px; border-radius: 12px; font-weight: 700; margin-bottom: 20px; font-size: 0.9rem; }
+        .container { max-width: 850px; margin: auto; background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); }
+        h1 { text-align: center; font-size: 2.2rem; font-weight: 800; color: #4834d4; }
+        h3 { text-align: center; color: #636e72; margin-bottom: 30px; }
+        .section-badge { display: inline-block; background: #a29bfe; color: white; padding: 8px 20px; border-radius: 12px; font-weight: 700; margin-bottom: 20px; }
         .card { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid #f0f0f0; }
         .card.is-wrong { border-left: 5px solid #ff7675; }
         .card.is-correct { border-left: 5px solid #55efc4; }
-        .question-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; line-height: 1.5; }
+        .question-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; }
         .img-rajah { width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 20px; display: block; }
-        
-        .radio-group label { display: block; padding: 12px 18px; background: #fdfdfd; border-radius: 12px; margin: 8px 0; cursor: pointer; border: 1px solid #eee; transition: 0.2s; }
-        .radio-group label:hover { background: #f1f2f6; }
-        
+        .radio-group label { display: block; padding: 12px 18px; background: #fdfdfd; border-radius: 12px; margin: 8px 0; cursor: pointer; border: 1px solid #eee; }
         input[type="text"] { width: 100%; padding: 15px; border: 2px solid #f0f0f0; border-radius: 12px; outline: none; background: #fafafa; }
+        .btn-submit { display: block; width: 100%; padding: 18px; background: #6c5ce7; color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 800; cursor: pointer; text-align: center; text-decoration: none; }
         
-        .btn-submit { display: block; width: 100%; padding: 18px; background: #6c5ce7; color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.3s; text-decoration: none; text-align: center; }
-        
-        .result-container { text-align: center; padding: 40px; background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%); border: 2px solid #bbdefb; border-radius: 30px; color: #1565c0; margin-bottom: 40px; }
-        .result-emoji { font-size: 3.5rem; margin-bottom: 15px; display: block; }
-        .score-display { font-size: 4.5rem; font-weight: 800; color: #1976d2; margin: 10px 0; }
-        .score-label { font-size: 1rem; font-weight: 700; color: #64b5f6; text-transform: uppercase; letter-spacing: 2px; }
-        
+        /* RESULTS */
+        .result-container { text-align: center; padding: 40px; background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%); border: 2px solid #bbdefb; border-radius: 30px; margin-bottom: 40px; }
+        .score-display { font-size: 4.5rem; font-weight: 800; color: #1976d2; }
         .stat-flex { display: flex; justify-content: center; gap: 20px; margin-top: 25px; }
         .stat-card { background: white; padding: 15px 25px; border-radius: 15px; border: 1px solid #e1f5fe; min-width: 140px; }
         .stat-val { display: block; font-size: 1.4rem; font-weight: 800; color: #1e88e5; }
-        .stat-lab { font-size: 0.75rem; color: #90caf9; font-weight: 700; }
-        
-        .result-msg { font-size: 1.1rem; font-weight: 600; margin-top: 25px; color: #546e7a; line-height: 1.6; }
-        
         .back-link img { width: 50px; transition: 0.3s; }
-        .back-link:hover { transform: translateX(-8px); }
 
-        footer { text-align: center; padding: 40px; color: #636e72; font-weight: 600; font-size: 0.9rem; }
+        footer { text-align: center; padding: 40px; color: #636e72; font-weight: 600; }
 
         @media print {
-            header, footer, .back-link, .btn-submit, .profile-btn, .header-right, button { display: none !important; }
-            body { background: white !important; }
-            .container { box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; }
-            .result-container { border: 2px solid #333 !important; background: none !important; color: black !important; }
-            .card { page-break-inside: avoid; border: 1px solid #ccc !important; }
-            .is-correct { border-left: 10px solid #55efc4 !important; }
-            .is-wrong { border-left: 10px solid #ff7675 !important; }
-        }
-
-        @media (max-width: 768px) {
-            header { padding: 15px 5%; }
-            nav { display: none; }
-            main { padding: 30px 5%; }
+            header, footer, .back-link, .acc-wrapper, .btn-submit, button { display: none !important; }
+            .container { box-shadow: none !important; border: none !important; width: 100% !important; }
         }
     </style>
 </head>
 <body>
 
+<div class="acc-wrapper">
+    <div class="acc-button" onclick="toggleAccMenu()" title="Pilihan Aksesibilitas">
+        <img src="tools.png" alt="Aksesibilitas">
+    </div>
+    <div class="acc-menu" id="accMenu">
+        <div class="acc-menu-header">Alat Aksesibilitas</div>
+        <div class="acc-item" onclick="adjustFont(10)">
+            <img src="besar.png" alt="Zoom In"> Besarkan teks
+        </div>
+        <div class="acc-item" onclick="adjustFont(-10)">
+            <img src="kecil.png" alt="Zoom Out"> Kecilkan teks
+        </div>
+        <div class="acc-item" onclick="setEffect('grayscale')">
+            <img src="gray.png" alt="Grayscale"> Mod Kelabu
+        </div>
+        <div class="acc-item" onclick="setEffect('high-contrast')">
+            <img src="high.png" alt="Contrast"> Kontras Tinggi
+        </div>
+        <div class="acc-item" onclick="setEffect('negative-contrast')">
+            <img src="negatif.png" alt="Negative"> Kontras Negatif
+        </div>
+        <div class="acc-item" onclick="resetAcc()" style="color: #e74c3c; border-bottom: none; justify-content: center; font-weight: 800;">
+            <img src="reset.png" alt="Reset"> Reset
+        </div>
+    </div>
+</div>
+
 <header>
     <a href="index1.php"><img src="Logo.png" alt="Logo" class="logo-img"></a>
     <div class="header-right">
-
-    <nav>
-        <a href="index1.php">Utama</a>
-        <a href="nota.php">Nota</a>
-        <a href="kuiz.php">Kuiz</a>
-        <a href="rekod.php">Rekod</a>
-    </nav>
-    
+        <nav>
+            <a href="index1.php">Utama</a>
+            <a href="nota.php">Nota</a>
+            <a href="kuiz.php">Kuiz</a>
+            <a href="rekod.php">Rekod</a>
+        </nav>
         <a href="Profail.php" class="profile-btn"><img src="<?php echo $gambar_path; ?>" alt="Profil"></a>
     </div>
 </header>
 
 <main>
-    <a href="kuiz.php" class="back-link" data-aos="fade-right">
-        <img src="back.png" alt="Back">
-    </a>
+    <a href="kuiz.php" class="back-link" data-aos="fade-right"><img src="back.png" alt="Back"></a>
 
     <div class="container" data-aos="fade-up">
         <h1>Bab 3</h1>
@@ -260,22 +250,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <?php if ($sudah_hantar): ?>
             <div class="result-container" data-aos="zoom-in">
-                <span class="result-emoji"><?php echo ($markah_final >= 50) ? "🌿" : "🌱"; ?></span>
-                <p class="score-label">Skor Akhir</p>
+                <span style="font-size:3.5rem;"><?php echo ($markah_final >= 50) ? "🌿" : "🌱"; ?></span>
+                <p style="font-weight:700; color:#64b5f6; text-transform:uppercase;">Skor Akhir</p>
                 <div class="score-display"><?php echo $markah_final; ?><span style="font-size: 1.5rem; color: #90caf9;">/100</span></div>
                 
                 <div class="stat-flex">
                     <div class="stat-card">
                         <span class="stat-val"><?php echo $betul_a + $betul_b; ?> / 25</span>
-                        <span class="stat-lab">Betul</span>
+                        <span style="font-size:0.75rem; color:#90caf9; font-weight:700;">Betul</span>
                     </div>
                     <div class="stat-card">
                         <span class="stat-val">#<?php echo $percubaan; ?></span>
-                        <span class="stat-lab">Percubaan</span>
+                        <span style="font-size:0.75rem; color:#90caf9; font-weight:700;">Percubaan</span>
                     </div>
                 </div>
 
-                <div class="result-msg">
+                <div style="margin-top:25px; color:#546e7a; font-weight:600;">
                     <?php 
                     if($markah_final >= 80) echo "Cemerlang! Anda sangat memahami parameter kesihatan badan.";
                     elseif($markah_final >= 50) echo "Bagus! Anda telah lulus kuiz ini. Teruskan belajar!";
@@ -284,9 +274,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
 
                 <div style="display: flex; gap: 12px; justify-content: center; margin-top:35px;">
-                    <a href="kuiz3.php" class="btn-submit" style="width: auto; padding: 12px 30px; font-size: 0.95rem; background: white; color: #6c5ce7; border: 2px solid #e0e0e0;">Cuba Lagi</a>
-                    <button onclick="window.print()" class="btn-submit" style="width: auto; padding: 12px 30px; font-size: 0.95rem; background: #2d3436;">Cetak Hasil</button>
-                    <a href="rekod.php" class="btn-submit" style="width: auto; padding: 12px 30px; font-size: 0.95rem; background: #81acee;">Lihat Rekod</a>
+                    <a href="kuiz3.php" class="btn-submit" style="width: auto; padding: 12px 30px; background: white; color: #6c5ce7; border: 2px solid #e0e0e0;">Cuba Lagi</a>
+                    <button onclick="window.print()" class="btn-submit" style="width: auto; padding: 12px 30px; background: #2d3436;">Cetak Hasil</button>
+                    <a href="rekod.php" class="btn-submit" style="width: auto; padding: 12px 30px; background: #81acee;">Lihat Rekod</a>
                 </div>
             </div>
 
@@ -339,8 +329,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </footer>
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>AOS.init({ duration: 800, once: true });</script>
+<script>
+    AOS.init({ duration: 800, once: true });
+
+    // FUNGSI AKSESIBILITI
+    function toggleAccMenu() {
+        document.getElementById('accMenu').classList.toggle('active');
+    }
+
+    let zoom = 100;
+    function adjustFont(amount) {
+        zoom += amount;
+        if(zoom < 70) zoom = 70;
+        if(zoom > 150) zoom = 150;
+        document.documentElement.style.fontSize = zoom + "%";
+    }
+
+    function setEffect(effectClass) {
+        document.documentElement.classList.remove('grayscale', 'negative-contrast');
+        document.body.classList.remove('high-contrast');
+
+        if (effectClass === 'grayscale' || effectClass === 'negative-contrast') {
+            document.documentElement.classList.add(effectClass);
+        } else if (effectClass === 'high-contrast') {
+            document.body.classList.add(effectClass);
+        }
+    }
+
+    function resetAcc() {
+        zoom = 100;
+        document.documentElement.style.fontSize = "100%";
+        document.documentElement.className = "";
+        document.body.className = "";
+    }
+
+    // Tutup menu jika klik di luar
+    window.onclick = function(event) {
+        if (!event.target.closest('.acc-wrapper')) {
+            let menu = document.getElementById('accMenu');
+            if(menu && menu.classList.contains('active')) {
+                menu.classList.remove('active');
+            }
+        }
+    }
+</script>
 </body>
 </html>
-
-
