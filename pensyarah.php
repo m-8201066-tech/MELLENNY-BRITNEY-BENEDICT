@@ -307,8 +307,8 @@ if (isset($_SESSION['id'])) {
     <div class="header-right">
         <nav>
             <a href="pensyarah.php">Utama</a>
-            <a href="nota.php">Nota</a>
-            <a href="rekod.php">Rekod</a>
+            <a href="p.nota.php">Nota</a>
+            <a href="r-pelajar.php">Rekod</a>
         </nav>
 
         <div class="user-area">
@@ -399,3 +399,4 @@ if (isset($_SESSION['id'])) {
 
 </body>
 </html>
+
