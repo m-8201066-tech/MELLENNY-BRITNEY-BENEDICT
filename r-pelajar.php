@@ -284,11 +284,11 @@ if (!empty($data_img['gambar']) && file_exists("uploads/" . $data_img['gambar'])
     <div class="header-right">
         <nav>
             <a href="pensyarah.php">Utama</a>
-            <a href="p-nota.php">Nota</a>
+            <a href="p.nota.php">Nota</a>
             <a href="r-pelajar.php">Rekod</a>
         </nav>
         <div class="user-area">
-            <a href="Profail.php" class="profile-btn">
+            <a href="p-profail.php" class="profile-btn">
                 <img src="<?php echo $gambar_path; ?>" alt="Profil">
             </a>
         </div>
@@ -426,3 +426,4 @@ if (!empty($data_img['gambar']) && file_exists("uploads/" . $data_img['gambar'])
 </script>
 </body>
 </html>
+
