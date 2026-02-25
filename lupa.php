@@ -1,4 +1,9 @@
 <?php
+// Tambah ini untuk melihat ralat jika skrin putih muncul lagi
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include dirname(__FILE__) . '/config.php';
 
 $message = "";
@@ -13,28 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $hash = password_hash($newPass, PASSWORD_DEFAULT);
         
-        // Debug: Semak jika username wujud dahulu
-        $check = $conn->prepare("SELECT id FROM pengguna WHERE username=?");
-        $check->bind_param("s", $username);
-        $check->execute();
-        $res = $check->get_result();
-
-        if ($res->num_rows === 0) {
-            $message = "<span style='color:red;'>Ralat: Nama pengguna '$username' tidak dijumpai dalam sistem.</span>";
-        } else {
-            // Proses kemas kini
-            $stmt = $conn->prepare("UPDATE pengguna SET `Kata laluan`=? WHERE username=?");
-            $stmt->bind_param("ss", $hash, $username);
-            
-            if ($stmt->execute()) {
-                // Gunakan affected_rows >= 0 untuk kes di mana data mungkin sama
+        // Gunakan backtick (`) untuk nama kolum yang mempunyai jarak
+        $stmt = $conn->prepare("UPDATE pengguna SET `Kata laluan`=? WHERE username=?");
+        $stmt->bind_param("ss", $hash, $username);
+        
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows > 0) {
                 $message = "<span style='color:green;'>Berjaya! Sila log masuk dengan kata laluan baru.</span>";
             } else {
-                $message = "<span style='color:red;'>Ralat SQL: " . $conn->error . "</span>";
+                $message = "<span style='color:orange;'>Nama pengguna tidak wujud atau tiada perubahan dibuat.</span>";
             }
-            $stmt->close();
+        } else {
+            $message = "<span style='color:red;'>Ralat sistem: " . $conn->error . "</span>";
         }
-        $check->close();
+        $stmt->close();
     }
 }
 ?>
