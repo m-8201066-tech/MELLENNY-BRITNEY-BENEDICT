@@ -195,10 +195,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       box-shadow: 0 15px 25px rgba(108, 92, 231, 0.4);
     }
 
-    /* LINKS */
+    /* LINKS - DIUBAH KE TENGAH */
     .links-container { 
       display: flex; 
-      justify-content: space-between; 
+      justify-content: center; 
       margin-top: 25px; 
       font-size: 0.85rem;
     }
@@ -257,7 +257,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="links-container">
                 <a href="daftar.php">Daftar Akaun Baru</a>
-                <a href="lupa.php">Lupa Kata Laluan?</a>
             </div>
         </form>
 
