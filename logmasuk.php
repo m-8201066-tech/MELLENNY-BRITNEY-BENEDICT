@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Log Masuk | Sains KuVocC</title>
+  <title>Log Masuk|Sains KuVocC</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   
@@ -96,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       align-items: center;
     }
 
+    /* GLASS CONTAINER */
     .login-wrapper {
       width: 100%;
       max-width: 450px;
@@ -127,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       font-size: 1rem;
     }
 
+    /* INPUT STYLING */
     .input-group { 
       text-align: left; 
       margin-bottom: 25px; 
@@ -171,6 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       user-select: none; 
     }
 
+    /* BUTTON LOGIN */
     .btn-login { 
       width: 100%; 
       background: var(--primary-soft); 
@@ -192,9 +195,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       box-shadow: 0 15px 25px rgba(108, 92, 231, 0.4);
     }
 
-    /* LINKS TENGAH */
+    /* LINKS */
     .links-container { 
-      text-align: center; 
+      display: flex; 
+      justify-content: space-between; 
       margin-top: 25px; 
       font-size: 0.85rem;
     }
@@ -203,10 +207,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       color: var(--primary-soft); 
       text-decoration: none; 
       font-weight: 700; 
-    }
-
-    .links-container a:hover {
-      text-decoration: underline;
     }
 
     .back-link { 
@@ -257,6 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="links-container">
                 <a href="daftar.php">Daftar Akaun Baru</a>
+                <a href="lupa.php">Lupa Kata Laluan?</a>
             </div>
         </form>
 
@@ -264,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </div>
 
-<footer>
+<footer style="text-align: center; font-size: 0.85em; color: #555;">
      &copy; 2025 Sains SVM 1 KuVocC | <span style="color: var(--primary-soft);">Hak Cipta Mellenny Britney</span>
 </footer>
 
@@ -287,4 +288,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </script>
 
 </body>
+
 </html>
